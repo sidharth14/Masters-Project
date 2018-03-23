@@ -30,6 +30,7 @@ class test(Topo):
         for i in range (host):
             self.addHost('h'+str(i+1))
 
+
         # Adding switches
         '''for i in range (switch):
 	    mac = 'dpid=' + '"000000000000000' + str(i+1) +'"'
@@ -47,6 +48,8 @@ class test(Topo):
 	s8 = self.addSwitch('s8', dpid="0000000000000008")
 	s9 = self.addSwitch('s9', dpid="0000000000000009")
 	    
+ 
+
 	# adding Links
 	i = 2
 	j = 1
@@ -68,6 +71,8 @@ class test(Topo):
 	self.addLink(s1, s8, bw=100)
         # Links for S2
 	
+
+
 def run():
     cleanup()
     c = RemoteController('c', '127.0.0.1', 6653)
@@ -88,7 +93,8 @@ def run():
 		host = net.get(hostname)
 		ip = '192.168.'
 		ip = ip + str(ip_3) + '.' + str(k) + '/24'
-                k = k+1		
+                k = k+1
+		
 		host.setIP(ip)
 		host.cmd('route add default '+'h'+str(j)+'-eth0')
 		switch = '10.0.100.' + str(swt) + '/24' + ' 000000000000000'+ str(swt)
