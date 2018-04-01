@@ -20,10 +20,11 @@ class test(Topo):
 
 # creating test toplogy
     def __init__(self, **opts):
-	host = 35
-	switch = 9
- 	band1 = 100
+	host = 35         # total number of hosts in network
+	switch = 9        #total number of switches in the network
+ 	band1 = 100       #Bandwidth of the link in Mbps
 	band2 = 1000
+	queue_size = 32   #Defines the length of queue size 
         
         super(test, self).__init__(**opts)
         # adding Host
@@ -53,7 +54,7 @@ class test(Topo):
 	while i <= switch-1:
 		while j <= host:
 			for k in range(j,j+5):
-				self.addLink('h'+str(k), 's'+str(i), bw=band1)
+				self.addLink('h'+str(k), 's'+str(i), bw=band1, max_queue_size=queue_size)
 			j = j+5
 			break
 		i = i+1
@@ -101,18 +102,39 @@ def run():
 	  #host.setIP(ip)
 	  #host.cmd('route add default '+'h'+str(i+1)+'-eth0')
           #host.cmd('arp -s 10.0.100.2/24 0000000000000002')
+    hosts = list()
+    popens = {}
+    #target = h5
+    #target = 'h'+str(5)
     for x in range(1,36):
         hostnm = 'h'+str(x)
+        #hosts.append(hostnm)
         #print(hostnm)
-        target = 'h'+str(5)
+        
         #print(target)
         hostn = net.get(hostnm)
+	hosts.append(hostn)        
+	#print(type()hostn)
         #print(hostn)
-        targethost = net.get(target)
+        #targethost = net.get(target)
         #print(targethost)
-        if hostn != targethost:
-	    print('InTO target host loop:')
-            net.iperf((hostn, targethost))
+        #if hostn != targethost:
+	    #print('InTO target host loop:')
+            #net.iperf((hostn, targethost))
+    #hosts = (h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22, h23, h24, h25, h26, h27, h28, h29, h30, h31, h32, h33, h34, h35)
+    target = net.get('h'+str(5))
+    
+    #print(hosts)
+    for h in hosts:
+        #print('hosts are:', h)	
+	if h == target:
+            print('got the target host tobe h5',target)
+	    popens[h] = h.popen('tcpdump -w hpin_test.pcap')
+	    #print('Starting tcpdump here:')
+        else:
+            popens[h]=h.popen('hping3 ' + target.IP() + ' -c 20 --file hpin_testing.txt --data 100')
+	    #print(target.IP())
+        #popens[h]=h.popen('sudo','hping3',' -c',' 500',' --udp',' -p',' 100',target.IP())
 
     
     CLI(net)
